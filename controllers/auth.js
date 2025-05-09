@@ -1,27 +1,32 @@
 const express = require('express');
 const {validationResult} = require('express-validator');
+const User = require('../models/User');
 
 
 
-const createUser = (req, res = express.response) => {
+const createUser = async (req, res = express.response) => {
 
-    const {name, email, password} = req.body;
+    // const {name, email, password} = req.body;
 
-    // if( name.length < 5 ) {
-    //     return res.status(400).json({
-    //         ok:false,
-    //         msg: 'El nombre debe contener al menos 5 letras'
-    //     })
-    // }
-
-    res.status(201).json({
-        ok: true,
-        msg: 'registro',
-        name,
-        email,
-        password
-
-    })
+    try {
+        const user = new User(req.body);
+    
+        await user.save();
+    
+        res.status(201).json({
+            ok: true,
+            msg: 'registro',
+    
+        })
+        
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: false,
+            msg: 'Please contact your DB admin'
+        });
+    }
+    
 };
 
 const loginUser = (req, res = express.response) => {
