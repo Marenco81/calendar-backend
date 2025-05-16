@@ -1,4 +1,6 @@
 const {response} = require('express');
+const Events = require('../models/Events');
+const { body } = require('express-validator');
 
 const getEventos = (req, res = response) => {
 
@@ -9,15 +11,30 @@ const getEventos = (req, res = response) => {
 
 };
 
-const crearEvento = (req, res = response) => {
+const crearEvento = async (req, res = response) => {
 
     //verificar que tenga el evento
-    console.log(req.body)
+    const event = new Events(req.body);
 
-    res.json({
+    try {
+
+    event.user = req.uid;
+
+    const eventSaved = await event.save();
+
+      res.json({
         ok: true,
-        msg: 'crearEventos'
-    })
+        evento: eventSaved
+      })
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Contact the DB Admin'
+        });
+    }
+    
 
 };
 
