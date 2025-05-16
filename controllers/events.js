@@ -2,11 +2,14 @@ const {response} = require('express');
 const Events = require('../models/Events');
 const { body } = require('express-validator');
 
-const getEventos = (req, res = response) => {
+const getEventos = async (req, res = response) => {
+
+    const events = await Events.find()
+                                .populate('user', 'name');
 
     res.json({
         ok: true,
-        msg: 'getEventos'
+        events
     })
 
 };
