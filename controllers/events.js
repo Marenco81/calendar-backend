@@ -50,7 +50,7 @@ const actualizarEvento = async (req, res = response) => {
         const event = await Events.findById(eventId);
 
         if( !event ) {
-            res.status(404).json({
+            return res.status(404).json({
                 ok: false,
                 msg: "No Event with that id"
             });
@@ -86,14 +86,48 @@ const actualizarEvento = async (req, res = response) => {
 
 };
 
-const eliminarEvento = (req, res = response) => {
+const eliminarEvento = async (req, res = response) => {
 
-    res.json({
-        ok: true,
-        msg: 'eliminarEvento'
-    })
+
+    const eventId = req.params.id;
+    const uid = req.uid;
+
+    try {
+        const event = await Events.findById(eventId);
+
+        if( !event ) {
+            return res.status(404).json({
+                ok: false,
+                msg: "No Event with that id"
+            });
+        }
+
+        if (event.user.toString() !== uid) {
+            return res.status(401).json({
+                ok: false,
+                msg: 'No privilege to delete this event'
+            });
+        }
+
+
+        const eventDeleted = await Events.findByIdAndDelete( eventId);
+
+        res.json({
+            ok: true,
+            msg: eventDeleted
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Contact DB Admin'
+        });
+    }
+
 
 };
+
 
 
 module.exports = {
