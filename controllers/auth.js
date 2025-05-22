@@ -17,7 +17,7 @@ const createUser = async (req, res = express.response) => {
         if(user) {
             res.status(400).json({
                 ok: false,
-                msg: 'That email has already been used on an User'
+                msg: 'That email has already been used'
             })
         }
         user = new User(req.body);
@@ -109,6 +109,8 @@ const renewToken = async (req, res = express.response) => {
 
     res.json({
         ok: true,
+        uid,
+        name,
         token: token
     })
 };
